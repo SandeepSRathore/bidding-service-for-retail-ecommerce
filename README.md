@@ -42,6 +42,21 @@ The demo registers 10 vendors and creates 2 orders. It then opens a window and c
 
 Open http://localhost:8025 to read the emails. Stop the stack with `docker compose down` (add `-v` to also wipe the database).
 
+### Screenshots
+These come from one demo run with a 2-minute window.
+
+**Demo script output:** vendors bid, a late bid is rejected, and both orders are assigned to the lowest bidder.
+
+![Demo script output](docs/screenshots/01-demo-terminal.png)
+
+**Mailpit inbox:** 10 "Bidding open" emails, then 1 winner email and 9 "not selected" emails.
+
+![Mailpit inbox](docs/screenshots/02-mailpit-inbox.png)
+
+| Window opened (sent to every active vendor) | Winner: delivery manifest | Other bidders: not selected |
+|---|---|---|
+| ![Bidding open email](docs/screenshots/03-email-bidding-open.png) | ![Winner manifest email](docs/screenshots/04-email-winner-manifest.png) | ![Not selected email](docs/screenshots/05-email-not-selected.png) |
+
 ## Calling the API by hand
 ```bash
 ADMIN=$(curl -s -X POST localhost:8080/auth/dev-token -H 'Content-Type: application/json' \
