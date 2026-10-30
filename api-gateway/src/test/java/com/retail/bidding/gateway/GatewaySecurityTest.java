@@ -23,7 +23,8 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 import com.sun.net.httpserver.HttpServer;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        properties = "gateway.dev-token.enabled=true")
 @AutoConfigureWebTestClient
 class GatewaySecurityTest {
 

@@ -27,7 +27,8 @@ gateway:
     # Local development default only. Override with GATEWAY_JWT_SECRET everywhere else.
     secret: ${GATEWAY_JWT_SECRET:local-dev-secret-change-me-0123456789abcdef}
   dev-token:
-    enabled: ${GATEWAY_DEV_TOKEN_ENABLED:true}
+    # Off unless explicitly enabled: when on, anyone who can reach the gateway can mint an ADMIN token.
+    enabled: ${GATEWAY_DEV_TOKEN_ENABLED:false}
 
 management:
   endpoints:

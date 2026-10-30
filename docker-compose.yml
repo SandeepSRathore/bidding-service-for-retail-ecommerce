@@ -99,6 +99,7 @@ services:
     environment:
       <<: *service-env
       GATEWAY_JWT_SECRET: ${GATEWAY_JWT_SECRET:-local-dev-secret-change-me-0123456789abcdef}
+      GATEWAY_DEV_TOKEN_ENABLED: "true"   # local stack only: enables /auth/dev-token
     ports: ["8080:8080"]
     depends_on:
       - vendor-service

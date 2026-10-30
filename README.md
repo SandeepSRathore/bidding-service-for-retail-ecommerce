@@ -83,4 +83,4 @@ curl -s -X PUT localhost:8080/auctions/<auction-id>/bid -H "Authorization: Beare
 |---|---|---|
 | `AUCTION_WINDOW_DURATION` | `PT1H` | How long a bidding window stays open (ISO-8601 duration) |
 | `GATEWAY_JWT_SECRET` | dev value | HMAC key for JWTs, at least 32 bytes. Always override outside local development. |
-| `GATEWAY_DEV_TOKEN_ENABLED` | `true` | Turns `/auth/dev-token` on or off. Set it to `false` wherever real users exist. |
+| `GATEWAY_DEV_TOKEN_ENABLED` | `false` | Turns `/auth/dev-token` on (the local `docker-compose.yml` sets `true`). Never enable it where real users exist: anyone who can reach it can mint an ADMIN token. While it is off, tokens it issued are rejected. |

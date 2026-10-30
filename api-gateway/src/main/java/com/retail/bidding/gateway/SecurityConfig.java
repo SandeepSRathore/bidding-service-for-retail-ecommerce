@@ -1,10 +1,16 @@
 package com.retail.bidding.gateway;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.oauth2.core.OAuth2Error;
+import org.springframework.security.oauth2.core.OAuth2TokenValidator;
+import org.springframework.security.oauth2.core.OAuth2TokenValidatorResult;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder;
 import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
@@ -38,9 +44,26 @@ class SecurityConfig {
                 .build();
     }
 
+    /**
+     * When the dev token endpoint is off, tokens it issued earlier are rejected too, so a dev token
+     * can never be replayed against an environment that shares the signing key.
+     */
     @Bean
-    ReactiveJwtDecoder jwtDecoder(JwtProperties properties) {
-        return NimbusReactiveJwtDecoder.withSecretKey(properties.key()).macAlgorithm(MacAlgorithm.HS256).build();
+    ReactiveJwtDecoder jwtDecoder(JwtProperties properties,
+                                  @Value("${gateway.dev-token.enabled:false}") boolean devTokensEnabled) {
+        NimbusReactiveJwtDecoder decoder = NimbusReactiveJwtDecoder.withSecretKey(properties.key())
+                .macAlgorithm(MacAlgorithm.HS256)
+                .build();
+        if (!devTokensEnabled) {
+            decoder.setJwtValidator(JwtValidators.createDefaultWithValidators(rejectDevIssuer()));
+        }
+        return decoder;
+    }
+
+    private static OAuth2TokenValidator<Jwt> rejectDevIssuer() {
+        return jwt -> DevTokenController.ISSUER.equals(jwt.getClaimAsString("iss"))
+                ? OAuth2TokenValidatorResult.failure(new OAuth2Error("invalid_token", "Dev tokens are disabled", null))
+                : OAuth2TokenValidatorResult.success();
     }
 
     private static ReactiveJwtAuthenticationConverterAdapter authenticationConverter() {

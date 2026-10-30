@@ -20,11 +20,14 @@ import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Issues signed test tokens so the system can be exercised locally without an identity provider.
- * Disable with {@code gateway.dev-token.enabled=false} anywhere real users exist.
+ * Off by default; enable with {@code gateway.dev-token.enabled=true} for local development only, because
+ * anyone who can reach this endpoint can mint an ADMIN token.
  */
 @RestController
 @ConditionalOnProperty(name = "gateway.dev-token.enabled", havingValue = "true")
 class DevTokenController {
+
+    static final String ISSUER = "bidding-gateway-dev";
 
     enum Role { ADMIN, VENDOR }
 
@@ -57,7 +60,7 @@ class DevTokenController {
         Instant now = Instant.now();
         Instant expiresAt = now.plus(properties.tokenTtl());
         JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer("bidding-gateway-dev")
+                .issuer(ISSUER)
                 .subject(subject)
                 .issuedAt(now)
                 .expiresAt(expiresAt)

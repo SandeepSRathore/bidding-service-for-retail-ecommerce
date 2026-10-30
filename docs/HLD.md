@@ -183,4 +183,4 @@ Flyway handles database migrations for each service.
 ## 11. Not built yet
 - Rate limiting on the bid endpoints (needs Redis for Spring Cloud Gateway's `RequestRateLimiter`)
 - Correlation-ID / distributed tracing
-- A real identity provider. `/auth/dev-token` stands in for one; turn it off with `GATEWAY_DEV_TOKEN_ENABLED=false`.
+- A real identity provider. `/auth/dev-token` stands in for one. It is off by default and only the local Docker Compose stack enables it; while it is off, tokens it issued are rejected.
