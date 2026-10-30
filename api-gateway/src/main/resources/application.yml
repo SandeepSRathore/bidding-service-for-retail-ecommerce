@@ -1,0 +1,36 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: vendors
+              uri: ${VENDOR_SERVICE_URL:http://localhost:8081}
+              predicates:
+                - Path=/vendors,/vendors/**
+            - id: orders
+              uri: ${ORDER_SERVICE_URL:http://localhost:8082}
+              predicates:
+                - Path=/orders,/orders/**
+            - id: auctions
+              uri: ${AUCTION_SERVICE_URL:http://localhost:8083}
+              predicates:
+                - Path=/auctions,/auctions/**
+
+gateway:
+  jwt:
+    # Local development default only. Override with GATEWAY_JWT_SECRET everywhere else.
+    secret: ${GATEWAY_JWT_SECRET:local-dev-secret-change-me-0123456789abcdef}
+  dev-token:
+    enabled: ${GATEWAY_DEV_TOKEN_ENABLED:true}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
